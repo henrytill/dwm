@@ -3,12 +3,18 @@
 My personal fork of [dwm](http://dwm.suckless.org/) for use with [Nix](http://nixos.org/nix/)/[NixOS](http://nixos.org/)
 
 ### Requirements
-* The [Nix](http://nixos.org/nix/) package manager
+* [Nix](http://nixos.org/nix/) or [NixOS](http://nixos.org)
 
 ### Installation
+Add the following:
 ```
-nix-env -i dwm-HEAD -f /path/to/dwm/default.nix
+dwm-HEAD = pkgs.callPackage ./path/to/dwm {};
 ```
+to either:
+* `packageOverrides` in `~/.nixpkgs/config.nix` (Nix/NixOS)
+* `nixpkgs.config.packageOverrides` in `/etc/nixos/configuration.nix` (NixOS)
+
+The package can then be installed using standard techniques.
 
 ### Running dwm
 Add the following line to your `.xsession` to start dwm:
