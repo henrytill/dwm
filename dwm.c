@@ -462,6 +462,7 @@ cleanup(void) {
 	Arg a = {.ui = ~0};
 	Layout foo = { "", NULL };
 	Monitor *m;
+	size_t i;
 
 	view(&a);
 	selmon->lt[selmon->sellt] = &foo;
@@ -471,15 +472,13 @@ cleanup(void) {
 	XUngrabKey(dpy, AnyKey, AnyModifier, root);
 	while(mons)
 		cleanupmon(mons);
-	drw_cur_free(drw, cursor[CurNormal]);
-	drw_cur_free(drw, cursor[CurResize]);
-	drw_cur_free(drw, cursor[CurMove]);
-	drw_clr_free(scheme[SchemeNorm].border);
-	drw_clr_free(scheme[SchemeNorm].bg);
-	drw_clr_free(scheme[SchemeNorm].fg);
-	drw_clr_free(scheme[SchemeSel].border);
-	drw_clr_free(scheme[SchemeSel].bg);
-	drw_clr_free(scheme[SchemeSel].fg);
+	for(i = 0; i < CurLast; i++)
+		drw_cur_free(drw, cursor[i]);
+	for(i = 0; i < SchemeLast; i++) {
+		drw_clr_free(scheme[i].border);
+		drw_clr_free(scheme[i].bg);
+		drw_clr_free(scheme[i].fg);
+	}
 	drw_free(drw);
 	XSync(dpy, False);
 	XSetInputFocus(dpy, PointerRoot, RevertToPointerRoot, CurrentTime);
@@ -558,7 +557,7 @@ configurenotify(XEvent *e) {
 	XConfigureEvent *ev = &e->xconfigure;
 	Bool dirty;
 
-	// TODO: updategeom handling sucks, needs to be simplified
+	/* TODO: updategeom handling sucks, needs to be simplified */
 	if(ev->window == root) {
 		dirty = (sw != ev->width || sh != ev->height);
 		sw = ev->width;
@@ -631,8 +630,7 @@ Monitor *
 createmon(void) {
 	Monitor *m;
 
-	if(!(m = (Monitor *)calloc(1, sizeof(Monitor))))
-		die("fatal: could not malloc() %u bytes\n", sizeof(Monitor));
+	m = ecalloc(1, sizeof(Monitor));
 	m->tagset[0] = m->tagset[1] = 1;
 	m->mfact = mfact;
 	m->nmaster = nmaster;
@@ -691,9 +689,11 @@ dirtomon(int dir) {
 
 void
 drawbar(Monitor *m) {
-	int x, xx, w;
+	int x, xx, w, dx;
 	unsigned int i, occ = 0, urg = 0;
 	Client *c;
+
+	dx = (drw->fonts[0]->ascent + drw->fonts[0]->descent + 2) / 4;
 
 	for(c = m->clients; c; c = c->next) {
 		occ |= c->tags;
@@ -705,7 +705,7 @@ drawbar(Monitor *m) {
 		w = TEXTW(tags[i]);
 		drw_setscheme(drw, m->tagset[m->seltags] & 1 << i ? &scheme[SchemeSel] : &scheme[SchemeNorm]);
 		drw_text(drw, x, 0, w, bh, tags[i], urg & 1 << i);
-		drw_rect(drw, x, 0, w, bh, m == selmon && selmon->sel && selmon->sel->tags & 1 << i,
+		drw_rect(drw, x + 1, 1, dx, dx, m == selmon && selmon->sel && selmon->sel->tags & 1 << i,
 		           occ & 1 << i, urg & 1 << i);
 		x += w;
 	}
@@ -730,11 +730,11 @@ drawbar(Monitor *m) {
 		if(m->sel) {
 			drw_setscheme(drw, m == selmon ? &scheme[SchemeSel] : &scheme[SchemeNorm]);
 			drw_text(drw, x, 0, w, bh, m->sel->name, 0);
-			drw_rect(drw, x, 0, w, bh, m->sel->isfixed, m->sel->isfloating, 0);
+			drw_rect(drw, x + 1, 1, dx, dx, m->sel->isfixed, m->sel->isfloating, 0);
 		}
 		else {
 			drw_setscheme(drw, &scheme[SchemeNorm]);
-			drw_text(drw, x, 0, w, bh, NULL, 0);
+			drw_rect(drw, x, 0, w, bh, 1, 0, 1);
 		}
 	}
 	drw_map(drw, m->barwin, 0, 0, m->ww, bh);
@@ -1008,8 +1008,7 @@ manage(Window w, XWindowAttributes *wa) {
 	Window trans = None;
 	XWindowChanges wc;
 
-	if(!(c = calloc(1, sizeof(Client))))
-		die("fatal: could not malloc() %u bytes\n", sizeof(Client));
+	c = ecalloc(1, sizeof(Client));
 	c->win = w;
 	updatetitle(c);
 	if(XGetTransientForHint(dpy, w, &trans) && (t = wintoclient(trans))) {
@@ -1510,7 +1509,7 @@ setup(void) {
 	drw = drw_create(dpy, screen, root, sw, sh);
 	drw_load_fonts(drw, fonts, LENGTH(fonts));
 	if (!drw->fontcount)
-		die("No fonts could be loaded.\n");
+		die("no fonts could be loaded.\n");
 	bh = drw->fonts[0]->h + 2;
 	updategeom();
 	/* init atoms */
@@ -1573,7 +1572,7 @@ showhide(Client *c) {
 void
 sigchld(int unused) {
 	if(signal(SIGCHLD, sigchld) == SIG_ERR)
-		die("Can't install SIGCHLD handler");
+		die("can't install SIGCHLD handler:");
 	while(0 < waitpid(-1, NULL, WNOHANG));
 }
 
@@ -1789,8 +1788,7 @@ updategeom(void) {
 
 		for(n = 0, m = mons; m; m = m->next, n++);
 		/* only consider unique geometries as separate screens */
-		if(!(unique = (XineramaScreenInfo *)malloc(sizeof(XineramaScreenInfo) * nn)))
-			die("fatal: could not malloc() %u bytes\n", sizeof(XineramaScreenInfo) * nn);
+		unique = ecalloc(nn, sizeof(XineramaScreenInfo));
 		for(i = 0, j = 0; i < nn; i++)
 			if(isuniquegeom(unique, j, &info[i]))
 				memcpy(&unique[j++], &info[i], sizeof(XineramaScreenInfo));
@@ -2055,7 +2053,7 @@ zoom(const Arg *arg) {
 int
 main(int argc, char *argv[]) {
 	if(argc == 2 && !strcmp("-v", argv[1]))
-		die("dwm-"VERSION", © 2006-2014 dwm engineers, see LICENSE for details\n");
+		die("dwm-"VERSION", © 2006-2015 dwm engineers, see LICENSE for details\n");
 	else if(argc != 1)
 		die("usage: dwm [-v]\n");
 	if(!setlocale(LC_CTYPE, "") || !XSupportsLocale())
