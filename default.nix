@@ -1,4 +1,4 @@
-with import <nixpkgs> {};
+{ stdenv, fetchurl, libX11, libXft, libXinerama }:
 
 stdenv.mkDerivation {
   name = "dwm-HEAD";
@@ -6,7 +6,7 @@ stdenv.mkDerivation {
   src = builtins.filterSource
     (path: type: (toString path) != (toString ./.git)) ./.;
 
-  buildInputs = [ xlibs.libX11 xlibs.libXft xlibs.libXinerama ];
+  buildInputs = [ libX11 libXft libXinerama ];
 
   prePatch = ''
     substituteInPlace config.mk --replace '/usr/local' $out
