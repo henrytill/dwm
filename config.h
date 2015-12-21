@@ -4,7 +4,7 @@
 static const char *fonts[] = {
     "M+ 1mn:pixelsize=14"
 };
-static const char dmenufont[] = "M+ 1mn:pixelsize=14";
+static const char dmenufont[]       = "M+ 1mn:pixelsize=14";
 static const char normbordercolor[] = "grey75";
 static const char normbgcolor[]     = "grey90";
 static const char normfgcolor[]     = "grey20";
@@ -13,8 +13,8 @@ static const char selbgcolor[]      = "grey75";
 static const char selfgcolor[]      = "black";
 static const unsigned int borderpx  = 1;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
-static const Bool showbar           = True;     /* False means no bar */
-static const Bool topbar            = False;    /* False means bottom bar */
+static const int showbar            = 1;        /* 0 means no bar */
+static const int topbar             = 0;        /* 0 means bottom bar */
 
 /* tagging */
 static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
@@ -25,14 +25,14 @@ static const Rule rules[] = {
 	 *	WM_NAME(STRING) = title
 	 */
 	/* class      instance    title       tags mask     isfloating   monitor */
-	{ "Gimp",     NULL,       NULL,       0,            True,        -1 },
-	/* { "Firefox",  NULL,       NULL,       1 << 8,       False,       -1 }, */
+	{ "Gimp",     NULL,       NULL,       0,            1,           -1 },
+	/* { "Firefox",  NULL,       NULL,       1 << 8,       0,           -1 }, */
 };
 
 /* layout(s) */
 static const float mfact      = 0.5;  /* factor of master area size [0.05..0.95] */
 static const int nmaster      = 1;    /* number of clients in master area */
-static const Bool resizehints = False; /* True means respect size hints in tiled resizals */
+static const int resizehints  = 1;    /* 1 means respect size hints in tiled resizals */
 
 static const Layout layouts[] = {
 	/* symbol     arrange function */
