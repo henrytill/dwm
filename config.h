@@ -5,12 +5,12 @@ static const char *fonts[] = {
     "M+ 1mn:pixelsize=14"
 };
 static const char dmenufont[]       = "M+ 1mn:pixelsize=14";
-static const char normbordercolor[] = "grey75";
-static const char normbgcolor[]     = "grey90";
-static const char normfgcolor[]     = "grey20";
-static const char selbordercolor[]  = "grey75";
-static const char selbgcolor[]      = "grey75";
-static const char selfgcolor[]      = "black";
+static const char normbordercolor[] = "#444444";
+static const char normbgcolor[]     = "#222222";
+static const char normfgcolor[]     = "#bbbbbb";
+static const char selbordercolor[]  = "#005577";
+static const char selbgcolor[]      = "#005577";
+static const char selfgcolor[]      = "#eeeeee";
 static const unsigned int borderpx  = 1;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
 static const int showbar            = 1;        /* 0 means no bar */
@@ -30,9 +30,9 @@ static const Rule rules[] = {
 };
 
 /* layout(s) */
-static const float mfact      = 0.5;  /* factor of master area size [0.05..0.95] */
-static const int nmaster      = 1;    /* number of clients in master area */
-static const int resizehints  = 1;    /* 1 means respect size hints in tiled resizals */
+static const float mfact     = 0.5;  /* factor of master area size [0.05..0.95] */
+static const int nmaster     = 1;    /* number of clients in master area */
+static const int resizehints = 0;    /* 1 means respect size hints in tiled resizals */
 
 static const Layout layouts[] = {
 	/* symbol     arrange function */
