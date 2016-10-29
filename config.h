@@ -2,9 +2,9 @@
 
 /* appearance */
 static const char *fonts[] = {
-    "M+ 1mn:pixelsize=14"
+    "Inconsolata:style=Medium:pixelsize=16"
 };
-static const char dmenufont[]       = "M+ 1mn:pixelsize=14";
+static const char dmenufont[]       = "Inconsolata:style=Medium:pixelsize=16";
 static const char normbordercolor[] = "#444444";
 static const char normbgcolor[]     = "#222222";
 static const char normfgcolor[]     = "#bbbbbb";
