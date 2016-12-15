@@ -2,9 +2,9 @@
 
 /* appearance */
 static const char *fonts[] = {
-    "Fira Mono:style=Regular:pixelsize=14"
+    "Fira Mono:style=Regular:pixelsize=12"
 };
-static const char dmenufont[]       = "Fira Mono:style=Regular:pixelsize=14";
+static const char dmenufont[]       = "Fira Mono:style=Regular:pixelsize=12";
 static const char normbordercolor[] = "#444444";
 static const char normbgcolor[]     = "#222222";
 static const char normfgcolor[]     = "#bbbbbb";
@@ -55,7 +55,7 @@ static const Layout layouts[] = {
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
 static const char *dmenucmd[] = { "dmenu_run", "-b", "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor, "-sb", selbgcolor, "-sf", selfgcolor, NULL };
-static const char *termcmd[]  = { "urxvt", NULL };
+static const char *termcmd[]  = { "xterm", NULL };
 
 static Key keys[] = {
 	/* modifier                     key        function        argument */
